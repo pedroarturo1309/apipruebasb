@@ -32,6 +32,11 @@ builder.Services
         google.ClientSecret = builder.Configuration["Authentication:Google:clientSecret"];
         google.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
         google.ClaimActions.MapJsonKey("urn:google:access_token", "access_token", "token");
+    })
+    .AddMicrosoftAccount(micro => {
+         micro.ClientId = builder.Configuration["Authentication:Microsoft:clientId"];
+        micro.ClientSecret = builder.Configuration["Authentication:Microsoft:clientSecret"];
+       
     });
 
 var app = builder.Build();
