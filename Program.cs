@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,18 +11,28 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAuthentication(options=> {
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-})
-.AddCookie()
-.AddGoogle(options => {
-    options.ClientId ="";
-    options.ClientSecret ="";
-});
+// builder.Services.Configure<CookiePolicyOptions>(options => {
+//     options.MinimumSameSitePolicy = SameSiteMode.None;
+// });
 
 
 
+
+builder.Services
+    .AddAuthentication(auth =>
+    {
+        auth.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        auth.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    })
+    .AddCookie()
+    .AddGoogle(google =>
+    {
+        // En el código de configuración del proveedor externo (por ejemplo, Google)
+        google.ClientId = builder.Configuration["Authentication:Google:clientId"];
+        google.ClientSecret = builder.Configuration["Authentication:Google:clientSecret"];
+        google.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
+        google.ClaimActions.MapJsonKey("urn:google:access_token", "access_token", "token");
+    });
 
 var app = builder.Build();
 
@@ -35,6 +46,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseAuthentication();
 
 app.MapControllers();
 
