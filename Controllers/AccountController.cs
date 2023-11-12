@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using Microsoft.AspNetCore.Mvc;
 
 namespace apipruebasb.Controllers;
@@ -29,6 +30,55 @@ public class AccountController : ControllerBase
         {
             RedirectUri = Url.Action("GoogleResponse")
         });
+    }
+
+    [HttpGet("LoginMicrosoft")]
+    public async Task LoginMicrosoft()
+    {
+        await HttpContext.ChallengeAsync(MicrosoftAccountDefaults.AuthenticationScheme, new AuthenticationProperties()
+        {
+            RedirectUri = Url.Action("MicrosoftResponse")
+        });
+    }
+
+    [HttpGet("MicrosoftResponse")]
+    public async Task<IActionResult> MicrosoftResponse()
+    {
+        var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+        var token2 = await HttpContext.GetTokenAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        var tokens = authenticateResult.Ticket.Properties.GetTokens();
+        
+        var claims = authenticateResult?.Principal?.Identities?
+            .FirstOrDefault()?.Claims.Select(claim => new
+            {
+                claim.Issuer,
+                claim.OriginalIssuer,
+                claim.Type,
+                claim.Value
+            });
+
+        if (authenticateResult == null || !authenticateResult.Succeeded)
+            return BadRequest(); // TODO: Handle this better.
+                                 // await HttpContext.SignInAsync(GoogleDefaults.AuthorizationEndpoint, authenticateResult.Principal);
+
+
+        var accessTokenClaim = authenticateResult.Principal?.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+
+        // var accessToken = tokens?["access_token"]?.ToString();
+        var principal = authenticateResult.Principal;
+
+        foreach (var claim in principal.Claims)
+        {
+            Console.WriteLine($"Claim Type: {claim.Type}, Value: {claim.Value}");
+        }
+
+        // Alternatively, you can convert the properties to a JSON string for easier viewing
+        // var propertiesJson = JsonConvert.SerializeObject(authenticateResult.Properties.Items, Formatting.Indented);
+        // Console.WriteLine($"All Properties:\n{propertiesJson}");
+        var token = authenticateResult.Properties.GetTokenValue("access_token");
+
+        return Ok(claims);
     }
 
     [HttpGet("GoogleResponse")]

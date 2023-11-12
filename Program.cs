@@ -27,16 +27,47 @@ builder.Services
     .AddCookie()
     .AddGoogle(google =>
     {
+        google.SaveTokens = true;
         // En el código de configuración del proveedor externo (por ejemplo, Google)
         google.ClientId = builder.Configuration["Authentication:Google:clientId"];
         google.ClientSecret = builder.Configuration["Authentication:Google:clientSecret"];
         google.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
-        google.ClaimActions.MapJsonKey("urn:google:access_token", "access_token", "token");
+
+        google.Events.OnCreatingTicket = ctx =>
+            {
+                List<AuthenticationToken> tokens = ctx.Properties.GetTokens().ToList();
+
+                tokens.Add(new AuthenticationToken()
+                {
+                    Name = "TicketCreated",
+                    Value = DateTime.UtcNow.ToString()
+                });
+
+                ctx.Properties.StoreTokens(tokens);
+
+                return Task.CompletedTask;
+            };
     })
-    .AddMicrosoftAccount(micro => {
-         micro.ClientId = builder.Configuration["Authentication:Microsoft:clientId"];
+    .AddMicrosoftAccount(micro =>
+    {
+        micro.SaveTokens = true;
+        micro.ClientId = builder.Configuration["Authentication:Microsoft:clientId"];
         micro.ClientSecret = builder.Configuration["Authentication:Microsoft:clientSecret"];
-       
+
+        micro.Events.OnCreatingTicket = ctx =>
+          {
+              List<AuthenticationToken> tokens = ctx.Properties.GetTokens().ToList();
+
+              tokens.Add(new AuthenticationToken()
+              {
+                  Name = "TicketCreated",
+                  Value = DateTime.UtcNow.ToString()
+              });
+
+              ctx.Properties.StoreTokens(tokens);
+
+              return Task.CompletedTask;
+          };
     });
 
 var app = builder.Build();
