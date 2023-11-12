@@ -46,73 +46,45 @@ public class AccountController : ControllerBase
     {
         var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-        var token2 = await HttpContext.GetTokenAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        var tokens = authenticateResult.Ticket.Properties.GetTokens();
-        
+       return ResponseAuthentication(authenticateResult);
+
+    }
+
+    private IActionResult ResponseAuthentication(AuthenticateResult authenticateResult)
+    {
         var claims = authenticateResult?.Principal?.Identities?
-            .FirstOrDefault()?.Claims.Select(claim => new
-            {
-                claim.Issuer,
-                claim.OriginalIssuer,
-                claim.Type,
-                claim.Value
-            });
+                    .FirstOrDefault()?.Claims.Select(claim => new
+                    {
+                        claim.Issuer,
+                        claim.OriginalIssuer,
+                        claim.Type,
+                        claim.Value
+                    }).ToList();
+
+
+        var userInfo = new {
+            authenticateFrom = authenticateResult?.Principal?.Identities?
+                    .FirstOrDefault()?.Claims.FirstOrDefault()?.Issuer,
+            name = claims?.FirstOrDefault(claim => claim.Type == ClaimTypes.GivenName)?.Value,
+            surname = claims?.FirstOrDefault(claim => claim.Type == ClaimTypes.Surname)?.Value,
+            email = claims?.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)?.Value,
+        };
+        
 
         if (authenticateResult == null || !authenticateResult.Succeeded)
             return BadRequest(); // TODO: Handle this better.
                                  // await HttpContext.SignInAsync(GoogleDefaults.AuthorizationEndpoint, authenticateResult.Principal);
 
-
-        var accessTokenClaim = authenticateResult.Principal?.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
-
-        // var accessToken = tokens?["access_token"]?.ToString();
-        var principal = authenticateResult.Principal;
-
-        foreach (var claim in principal.Claims)
-        {
-            Console.WriteLine($"Claim Type: {claim.Type}, Value: {claim.Value}");
-        }
-
-        // Alternatively, you can convert the properties to a JSON string for easier viewing
-        // var propertiesJson = JsonConvert.SerializeObject(authenticateResult.Properties.Items, Formatting.Indented);
-        // Console.WriteLine($"All Properties:\n{propertiesJson}");
         var token = authenticateResult.Properties.GetTokenValue("access_token");
 
-        return Ok(claims);
+        return Ok(new { token,userInfo });
     }
 
     [HttpGet("GoogleResponse")]
     public async Task<IActionResult> GoogleResponse()
     {
         var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-        var claims = authenticateResult?.Principal?.Identities?
-            .FirstOrDefault()?.Claims.Select(claim => new
-            {
-                claim.Issuer,
-                claim.OriginalIssuer,
-                claim.Type,
-                claim.Value
-            });
-
-        if (authenticateResult == null || !authenticateResult.Succeeded)
-            return BadRequest(); // TODO: Handle this better.
-                                 // await HttpContext.SignInAsync(GoogleDefaults.AuthorizationEndpoint, authenticateResult.Principal);
-
-
-        var principal = authenticateResult.Principal;
-
-        foreach (var claim in principal.Claims)
-        {
-            Console.WriteLine($"Claim Type: {claim.Type}, Value: {claim.Value}");
-        }
-
-        // Alternatively, you can convert the properties to a JSON string for easier viewing
-        // var propertiesJson = JsonConvert.SerializeObject(authenticateResult.Properties.Items, Formatting.Indented);
-        // Console.WriteLine($"All Properties:\n{propertiesJson}");
-        var token = authenticateResult.Properties.GetTokenValue("access_token");
-
-        return Ok(claims);
+       return ResponseAuthentication(authenticateResult);
     }
     [HttpGet("LogOut")]
     public async Task<IActionResult> LogOut()
