@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace apipruebasb.Controllers;
 
+[AllowAnonymous]
 [ApiController]
 [Route("[controller]")]
 public class AccountController : ControllerBase
@@ -21,6 +23,12 @@ public class AccountController : ControllerBase
     public AccountController(ILogger<AccountController> logger)
     {
         _logger = logger;
+    }
+
+    [HttpGet("Prueba")]
+    public IActionResult Prueba()
+    {
+       return Ok(Summaries);
     }
 
     [HttpGet("login")]
@@ -46,7 +54,7 @@ public class AccountController : ControllerBase
     {
         var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-       return ResponseAuthentication(authenticateResult);
+        return ResponseAuthentication(authenticateResult);
 
     }
 
@@ -62,14 +70,15 @@ public class AccountController : ControllerBase
                     }).ToList();
 
 
-        var userInfo = new {
+        var userInfo = new
+        {
             authenticateFrom = authenticateResult?.Principal?.Identities?
                     .FirstOrDefault()?.Claims.FirstOrDefault()?.Issuer,
             name = claims?.FirstOrDefault(claim => claim.Type == ClaimTypes.GivenName)?.Value,
             surname = claims?.FirstOrDefault(claim => claim.Type == ClaimTypes.Surname)?.Value,
             email = claims?.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)?.Value,
         };
-        
+
 
         if (authenticateResult == null || !authenticateResult.Succeeded)
             return BadRequest(); // TODO: Handle this better.
@@ -77,14 +86,14 @@ public class AccountController : ControllerBase
 
         var token = authenticateResult.Properties.GetTokenValue("access_token");
 
-        return Ok(new { token,userInfo });
+        return Ok(new { token, userInfo, claims });
     }
 
     [HttpGet("GoogleResponse")]
     public async Task<IActionResult> GoogleResponse()
     {
         var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-       return ResponseAuthentication(authenticateResult);
+        return ResponseAuthentication(authenticateResult);
     }
     [HttpGet("LogOut")]
     public async Task<IActionResult> LogOut()
