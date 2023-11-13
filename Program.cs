@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using apipruebasb_repository.Usuario;
+using apipruebasb_repository;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,11 +14,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
 // builder.Services.Configure<CookiePolicyOptions>(options => {
 //     options.MinimumSameSitePolicy = SameSiteMode.None;
 // });
 
-
+builder.Services.AddDbContext<PruebasbDBContext>(
+        options => options.UseSqlServer("name=ConnectionStrings:LocalConnection"));
 
 
 builder.Services

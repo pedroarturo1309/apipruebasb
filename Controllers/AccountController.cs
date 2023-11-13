@@ -1,4 +1,6 @@
 ﻿using System.Security.Claims;
+using apipruebasb_repository.Usuario;
+using apipruebasb_repository.Usuario.DTO;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -19,10 +21,12 @@ public class AccountController : ControllerBase
     };
 
     private readonly ILogger<AccountController> _logger;
+    private readonly IUsuarioRepository _usuarioRepository;
 
-    public AccountController(ILogger<AccountController> logger)
+    public AccountController(ILogger<AccountController> logger, IUsuarioRepository usuarioRepository)
     {
         _logger = logger;
+        _usuarioRepository = usuarioRepository;
     }
 
     [HttpGet("Prueba")]
@@ -70,13 +74,13 @@ public class AccountController : ControllerBase
                     }).ToList();
 
 
-        var userInfo = new
+        var userInfo = new UsuarioOauthDTO
         {
-            authenticateFrom = authenticateResult?.Principal?.Identities?
+            AutenticadoDesde = authenticateResult?.Principal?.Identities?
                     .FirstOrDefault()?.Claims.FirstOrDefault()?.Issuer,
-            name = claims?.FirstOrDefault(claim => claim.Type == ClaimTypes.GivenName)?.Value,
-            surname = claims?.FirstOrDefault(claim => claim.Type == ClaimTypes.Surname)?.Value,
-            email = claims?.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)?.Value,
+            Nombres = claims?.FirstOrDefault(claim => claim.Type == ClaimTypes.GivenName)?.Value,
+            Apellidos = claims?.FirstOrDefault(claim => claim.Type == ClaimTypes.Surname)?.Value,
+            CorreoElectronico = claims?.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)?.Value,
         };
 
 
