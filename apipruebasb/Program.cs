@@ -5,10 +5,15 @@ using apipruebasb_repository.Usuario;
 using apipruebasb_repository;
 using Microsoft.EntityFrameworkCore;
 using apipruebasb_repository.IMDB;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using apipruebasb_repository.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var MyAllowSpecificOrigins = "_sceAllowSpecificOrigins";
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -17,6 +22,17 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<PruebasbDBContext>(
         options => options.UseSqlServer("name=ConnectionStrings:LocalConnection"));
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                  policy =>
+                  {
+                      policy.WithOrigins("http://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                  });
+});
 
 #region Declaracion de repositorios
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
@@ -28,8 +44,10 @@ builder.Services
     .AddAuthentication(auth =>
     {
         auth.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        auth.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+        auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
+    .AddJwtBearer()
     .AddCookie()
     .AddGoogle(google =>
     {
@@ -87,11 +105,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(MyAllowSpecificOrigins);
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 app.UseAuthentication();
 
+app.UseMiddleware<JwtMiddleware>();
 app.MapControllers();
 
 app.Run();

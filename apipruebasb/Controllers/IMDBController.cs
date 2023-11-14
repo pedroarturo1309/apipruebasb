@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using apipruebasb_repository.Authorization;
 using apipruebasb_repository.IMDB;
 using Microsoft.AspNetCore.Mvc;
 
 namespace apipruebasb.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class IMDBController : ControllerBase
@@ -19,7 +21,7 @@ namespace apipruebasb.Controllers
         [HttpGet("buscar-nombre")]
         public async Task<IActionResult> BuscarPorNombre(string nombre, int pagina)
         {
-            var respuesta = await _repository.BuscarPorTitulo(nombre);
+            var respuesta = await _repository.BuscarPorTitulo(nombre, pagina);
             return Ok(respuesta);
         }
 

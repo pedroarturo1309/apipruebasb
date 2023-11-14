@@ -1,4 +1,5 @@
-using Microsoft.AspNetCore.Authorization;
+
+using apipruebasb_repository.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace apipruebasb.Controllers;

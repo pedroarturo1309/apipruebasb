@@ -8,8 +8,11 @@ namespace apipruebasb_repository.Usuario
 {
     public interface IUsuarioRepository
     {
-        public void VerificarInicioSesionOauth(UsuarioOauthDTO model);
+        public string VerificarInicioSesionOauth(UsuarioOauthDTO model);
         public GenericResponse<string> RegistrarUsuarioLocal(UsuarioOauthDTO model);
         public GenericResponse<string> IniciarSesionLocal(string email, string contrasena);
+
+        public string GenerarTokenJWT(UsuarioOauthDTO user, int codigoUsuario);
+        public UsuarioOauthDTO? ValidateJwtToken(string? token);
     }
 }

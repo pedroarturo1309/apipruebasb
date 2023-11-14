@@ -90,10 +90,14 @@ public class AccountController : ControllerBase
             return BadRequest(); // TODO: Handle this better.
                                  // await HttpContext.SignInAsync(GoogleDefaults.AuthorizationEndpoint, authenticateResult.Principal);
 
-        var token = authenticateResult.Properties.GetTokenValue("access_token");
+        // var token = authenticateResult.Properties.GetTokenValue("access_token");
 
-        _usuarioRepository.VerificarInicioSesionOauth(userInfo);
+        string token = _usuarioRepository.VerificarInicioSesionOauth(userInfo);
 
+
+        // Redirigir a la aplicación Angular con un parámetro en la URL
+        var angularAppUrl = "http://localhost:4200/login";
+        return Redirect($"{angularAppUrl}?authResult={token}");
         return Ok(new { token, userInfo, claims });
     }
 
