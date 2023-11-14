@@ -11,5 +11,6 @@ namespace apipruebasb_repository.Usuario.DTO
         public string Apellidos { get; set; }
         public string AutenticadoDesde { get; set; }
         public string CorreoElectronico { get; set; }
+        public string? Contrasena { get; set; }
     }
 }

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BCrypt.Net;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace apipruebasb.Controllers;
 
@@ -32,7 +34,7 @@ public class AccountController : ControllerBase
     [HttpGet("Prueba")]
     public IActionResult Prueba()
     {
-       return Ok(Summaries);
+        return Ok(Summaries);
     }
 
     [HttpGet("login")]
@@ -126,5 +128,19 @@ public class AccountController : ControllerBase
 
         return Ok();
         // return LocalRedirect(returnUrl);
+    }
+
+    [HttpPost("Registrar")]
+    public IActionResult Registrar([FromBody] UsuarioOauthDTO model)
+    {
+        var respuesta = _usuarioRepository.RegistrarUsuarioLocal(model);
+        return Ok(respuesta);
+    }
+
+    [HttpPost("IniciarSesion")]
+    public IActionResult IniciarSesion([FromBody] InicioSesionDTO model)
+    {
+        var respuesta = _usuarioRepository.IniciarSesionLocal(model.CorreoElectronico, model.Contrasena);
+        return Ok(respuesta);
     }
 }

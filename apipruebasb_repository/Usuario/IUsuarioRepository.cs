@@ -9,5 +9,7 @@ namespace apipruebasb_repository.Usuario
     public interface IUsuarioRepository
     {
         public void VerificarInicioSesionOauth(UsuarioOauthDTO model);
+        public GenericResponse<string> RegistrarUsuarioLocal(UsuarioOauthDTO model);
+        public GenericResponse<string> IniciarSesionLocal(string email, string contrasena);
     }
 }
