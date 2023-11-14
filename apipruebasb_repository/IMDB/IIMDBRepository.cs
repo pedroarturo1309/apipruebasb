@@ -9,5 +9,6 @@ namespace apipruebasb_repository.IMDB
     public interface IIMDBRepository
     {
         public Task<GenericResponse<ListaPeliculaDTO>> BuscarPorTitulo(string Titulo, int pagina = 1);
+        public Task<GenericResponse<DetallePeliculaDTO>> BuscarDetallePelicula(string codigo);
     }
 }

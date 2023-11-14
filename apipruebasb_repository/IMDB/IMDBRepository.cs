@@ -22,7 +22,7 @@ namespace apipruebasb_repository.IMDB
 
             if (!string.IsNullOrEmpty(json))
                 respuesta.Data = JsonConvert.DeserializeObject<ListaPeliculaDTO>(json);
-            else 
+            else
                 respuesta.AddNotification("Ha ocurrido un error consultado las peliculas");
 
             return respuesta;
@@ -33,7 +33,7 @@ namespace apipruebasb_repository.IMDB
             Lista,
             Detalle
         }
-        private async Task<string?> EnviarRequest(TipoBusqueda tipo, string? titulo, int pagina, string? codigo = null)
+        private async Task<string?> EnviarRequest(TipoBusqueda tipo, string? titulo, int? pagina, string? codigo = null)
         {
             string apiKey = _configuration["IMDB:key"];
             string baseurl = _configuration["IMDB:url"];
@@ -59,6 +59,19 @@ namespace apipruebasb_repository.IMDB
 
                 return null;
             }
+        }
+
+        public async Task<GenericResponse<DetallePeliculaDTO>> BuscarDetallePelicula(string codigo)
+        {
+            GenericResponse<DetallePeliculaDTO> respuesta = new GenericResponse<DetallePeliculaDTO>();
+            string? json = await EnviarRequest(TipoBusqueda.Detalle, null, null, codigo);
+
+            if (!string.IsNullOrEmpty(json))
+                respuesta.Data = JsonConvert.DeserializeObject<DetallePeliculaDTO>(json);
+            else
+                respuesta.AddNotification("Ha ocurrido un error consultado las peliculas");
+
+            return respuesta;
         }
     }
 }

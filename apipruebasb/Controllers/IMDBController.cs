@@ -23,5 +23,12 @@ namespace apipruebasb.Controllers
             return Ok(respuesta);
         }
 
+        [HttpGet("buscar-codigo")]
+        public async Task<IActionResult> BuscarPorNombre(string codigo)
+        {
+            var respuesta = await _repository.BuscarDetallePelicula(codigo);
+            return Ok(respuesta);
+        }
+
     }
 }
