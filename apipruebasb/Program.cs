@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using apipruebasb_repository.Usuario;
 using apipruebasb_repository;
 using Microsoft.EntityFrameworkCore;
+using apipruebasb_repository.IMDB;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,7 @@ builder.Services.AddDbContext<PruebasbDBContext>(
 
 #region Declaracion de repositorios
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IIMDBRepository, IMDBRepository>();
 #endregion
 
 #region  Configuracion de authenticacion
