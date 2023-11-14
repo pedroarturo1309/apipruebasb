@@ -97,7 +97,7 @@ public class AccountController : ControllerBase
 
         // Redirigir a la aplicación Angular con un parámetro en la URL
         var angularAppUrl = "http://localhost:4200/login";
-        return Redirect($"{angularAppUrl}?authResult={token}");
+        return Redirect($"{angularAppUrl}?authResult={token}&usuario={userInfo.Nombres} {userInfo.Apellidos}");
         return Ok(new { token, userInfo, claims });
     }
 

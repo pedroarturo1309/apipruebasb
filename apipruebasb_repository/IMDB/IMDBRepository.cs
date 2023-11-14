@@ -90,6 +90,7 @@ namespace apipruebasb_repository.IMDB
                                                        puedeEditar = pelicula.UsuarioId == CurrentUser.UsuarioId,
                                                        pelicula.Id,
                                                        pelicula.Comentario,
+                                                       pelicula.FechaCreacion,
                                                        NombreUsuario = $"{pelicula.usuario.Nombres} {pelicula.usuario.Apellidos}"
                                                    }).ToListAsync();
             }
@@ -117,7 +118,7 @@ namespace apipruebasb_repository.IMDB
 
                 await _context.SaveChangesAsync();
             }
-            catch
+            catch(Exception ex)
             {
                 respuesta.AddNotification("Hubo un error al guardar el comentario.");
             }

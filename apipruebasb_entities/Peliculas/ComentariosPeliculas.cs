@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace apipruebasb_entities.Peliculas
     [Table("ComentariosPeliculas")]
     public class ComentariosPeliculas
     {
+        [Key]
         public int Id { get; set; }
 
         public string PeliculaId { get; set; }

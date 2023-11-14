@@ -21,7 +21,7 @@ namespace apipruebasb_repository.Usuario
         {
             get
             {
-                return int.Parse(GetClaimValue(_httpContextAccessor.HttpContext, "codigo") ?? "0");
+                return int.Parse(GetClaimValue(_httpContextAccessor.HttpContext, "codigoUsuario") ?? "0");
             }
         }
 

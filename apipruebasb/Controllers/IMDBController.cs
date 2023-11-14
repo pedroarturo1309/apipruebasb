@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using apipruebasb_repository.Authorization;
 using apipruebasb_repository.IMDB;
+using apipruebasb_repository.IMDB.DTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace apipruebasb.Controllers
@@ -32,5 +33,18 @@ namespace apipruebasb.Controllers
             return Ok(respuesta);
         }
 
+        [HttpPost("guardar-comentario")]
+        public async Task<IActionResult> GuardarComentario([FromBody] GuardarComentarioDTO model)
+        {
+            var respuesta = await _repository.AgregarComentario(model.CodigoPelicula, model.Comentario);
+            return Ok(respuesta);
+        }
+
+        [HttpGet("buscar-comentarios")]
+        public async Task<IActionResult> BuscarComentarios(string codigo)
+        {
+            var respuesta = await _repository.BuscarComentarios(codigo);
+            return Ok(respuesta);
+        }
     }
 }
