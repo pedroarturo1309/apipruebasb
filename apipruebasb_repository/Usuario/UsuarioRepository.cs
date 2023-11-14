@@ -16,16 +16,23 @@ namespace apipruebasb_repository.Usuario
             _context = context;
         }
 
-        public void RegistrarUsuario()
+        public void VerificarInicioSesionOauth(UsuarioOauthDTO model)
         {
-            throw new NotImplementedException();
-        }
 
-        private bool validateUser(UsuarioOauthDTO model)
-        {
-            if(_context.Usuarios.Any(x => x.CorreoElectronico == model.CorreoElectronico))
+            if (!_context.Usuarios.Any(x => x.CorreoElectronico == model.CorreoElectronico))
+            {
+                _context.Usuarios.Add(new apipruebasb_entities.Usuarios.Usuarios()
+                {
+                    Apellidos = model.Apellidos,
+                    CorreoElectronico = model.CorreoElectronico,
+                    CuentaRegistradaDesde = model.AutenticadoDesde,
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    Nombres = model.Nombres
+                });
 
-            return false;
+                _context.SaveChanges();
+            }
         }
     }
 }

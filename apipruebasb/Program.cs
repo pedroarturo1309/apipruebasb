@@ -14,16 +14,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-
-// builder.Services.Configure<CookiePolicyOptions>(options => {
-//     options.MinimumSameSitePolicy = SameSiteMode.None;
-// });
-
 builder.Services.AddDbContext<PruebasbDBContext>(
         options => options.UseSqlServer("name=ConnectionStrings:LocalConnection"));
 
+#region Declaracion de repositorios
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+#endregion
 
+#region  Configuracion de authenticacion
 builder.Services
     .AddAuthentication(auth =>
     {
@@ -75,6 +73,8 @@ builder.Services
               return Task.CompletedTask;
           };
     });
+
+#endregion
 
 var app = builder.Build();
 

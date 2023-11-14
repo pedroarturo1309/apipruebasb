@@ -19,6 +19,7 @@ namespace apipruebasb_entities.Usuarios
 
         public string CorreoElectronico { get; set; }
 
+        public string? Contrasena { get; set; }
         public string CuentaRegistradaDesde { get; set; }
 
         public DateTime FechaCreacion { get; set; }

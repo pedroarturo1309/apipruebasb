@@ -1,5 +1,4 @@
-﻿using apipruebasb_entities.Usuarios;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace apipruebasb_repository;
 public class PruebasbDBContext : DbContext
@@ -9,6 +8,6 @@ public class PruebasbDBContext : DbContext
     {
     }
 
-    public DbSet<Usuarios> Usuarios { get; set; }
+    public DbSet<apipruebasb_entities.Usuarios.Usuarios> Usuarios { get; set; }
 
 }

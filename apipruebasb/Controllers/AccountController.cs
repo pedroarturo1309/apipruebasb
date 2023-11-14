@@ -90,6 +90,8 @@ public class AccountController : ControllerBase
 
         var token = authenticateResult.Properties.GetTokenValue("access_token");
 
+        _usuarioRepository.VerificarInicioSesionOauth(userInfo);
+
         return Ok(new { token, userInfo, claims });
     }
 
