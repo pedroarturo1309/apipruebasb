@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using apipruebasb_repository.IMDB.DTO;
+using apipruebasb_repository.Usuario;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
@@ -11,9 +13,11 @@ namespace apipruebasb_repository.IMDB
     public class IMDBRepository : IIMDBRepository
     {
         private readonly IConfiguration _configuration;
-        public IMDBRepository(IConfiguration configuration)
+        private readonly PruebasbDBContext _context;
+        public IMDBRepository(IConfiguration configuration, PruebasbDBContext context)
         {
             _configuration = configuration;
+            _context = context;
         }
         public async Task<GenericResponse<ListaPeliculaDTO>> BuscarPorTitulo(string Titulo, int pagina = 1)
         {
@@ -74,9 +78,27 @@ namespace apipruebasb_repository.IMDB
             return respuesta;
         }
 
-        public Task<GenericResponse<dynamic>> BuscarComentarios(string codigoPelicula)
+        public async Task<GenericResponse<dynamic>> BuscarComentarios(string codigoPelicula)
         {
-            throw new NotImplementedException();
+            GenericResponse<dynamic> respuesta = new GenericResponse<dynamic>();
+            try
+            {
+                respuesta.Data = await _context.ComentariosPeliculas.Where(x => x.PeliculaId == codigoPelicula)
+                                                   .Select(pelicula => new
+                                                   {
+                                                       puedeEditar = pelicula.UsuarioId == CurrentUser.UsuarioId,
+                                                       pelicula.Id,
+                                                       pelicula.Comentario,
+                                                       NombreUsuario = $"{pelicula.usuario.Nombres} {pelicula.usuario.Apellidos}"
+                                                   }).ToListAsync();
+            }
+            catch
+            {
+                respuesta.AddNotification("Hubo un error buscando los comentarios.");
+            }
+
+
+            return respuesta;
         }
 
         public Task<GenericResponse<dynamic>> AgregarComentario(string codigoPelicula, string comentario)

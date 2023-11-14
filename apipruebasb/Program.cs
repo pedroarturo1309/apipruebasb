@@ -105,6 +105,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.Use((context, next) =>
+{
+    CurrentUser.Configure(context.RequestServices.GetRequiredService<IHttpContextAccessor>());
+    return next(context);
+});
+
+
 app.UseCors(MyAllowSpecificOrigins);
 
 app.UseHttpsRedirection();
