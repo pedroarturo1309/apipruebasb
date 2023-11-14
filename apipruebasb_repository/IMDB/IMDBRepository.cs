@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using apipruebasb_entities.Peliculas;
 using apipruebasb_repository.IMDB.DTO;
 using apipruebasb_repository.Usuario;
 using Microsoft.EntityFrameworkCore;
@@ -101,9 +102,26 @@ namespace apipruebasb_repository.IMDB
             return respuesta;
         }
 
-        public Task<GenericResponse<dynamic>> AgregarComentario(string codigoPelicula, string comentario)
+        public async Task<GenericResponse<dynamic>> AgregarComentario(string codigoPelicula, string comentario)
         {
-            throw new NotImplementedException();
+            GenericResponse<dynamic> respuesta = new GenericResponse<dynamic>();
+            try
+            {
+                await _context.ComentariosPeliculas.AddAsync(new ComentariosPeliculas()
+                {
+                    Comentario = comentario,
+                    PeliculaId = codigoPelicula,
+                    FechaCreacion = DateTime.Now,
+                    UsuarioId = CurrentUser.UsuarioId
+                });
+
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                respuesta.AddNotification("Hubo un error al guardar el comentario.");
+            }
+            return respuesta;
         }
     }
 }
