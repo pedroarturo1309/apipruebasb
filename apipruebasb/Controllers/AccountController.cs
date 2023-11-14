@@ -37,8 +37,8 @@ public class AccountController : ControllerBase
         return Ok(Summaries);
     }
 
-    [HttpGet("login")]
-    public async Task Login()
+    [HttpGet("login-google")]
+    public async Task LoginGoogle()
     {
         await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme, new AuthenticationProperties()
         {
@@ -46,7 +46,7 @@ public class AccountController : ControllerBase
         });
     }
 
-    [HttpGet("LoginMicrosoft")]
+    [HttpGet("login-microsoft")]
     public async Task LoginMicrosoft()
     {
         await HttpContext.ChallengeAsync(MicrosoftAccountDefaults.AuthenticationScheme, new AuthenticationProperties()
@@ -110,26 +110,6 @@ public class AccountController : ControllerBase
         return Ok();
     }
 
-    [HttpGet("LoginCallback")]
-    public async Task<IActionResult> LoginCallback(string returnUrl = "PEDRO")
-    {
-        var authenticateResult = await HttpContext.AuthenticateAsync("External");
-
-        if (!authenticateResult.Succeeded)
-            return BadRequest(); // TODO: Handle this better.
-
-        var claimsIdentity = new ClaimsIdentity("Application");
-
-        claimsIdentity.AddClaim(authenticateResult.Principal.FindFirst(ClaimTypes.NameIdentifier));
-        claimsIdentity.AddClaim(authenticateResult.Principal.FindFirst(ClaimTypes.Email));
-
-        await HttpContext.SignInAsync(GoogleDefaults.AuthorizationEndpoint,
-            new ClaimsPrincipal(claimsIdentity));
-
-        return Ok();
-        // return LocalRedirect(returnUrl);
-    }
-
     [HttpPost("Registrar")]
     public IActionResult Registrar([FromBody] UsuarioOauthDTO model)
     {
@@ -137,7 +117,7 @@ public class AccountController : ControllerBase
         return Ok(respuesta);
     }
 
-    [HttpPost("IniciarSesion")]
+    [HttpPost("login-local")]
     public IActionResult IniciarSesion([FromBody] InicioSesionDTO model)
     {
         var respuesta = _usuarioRepository.IniciarSesionLocal(model.CorreoElectronico, model.Contrasena);
