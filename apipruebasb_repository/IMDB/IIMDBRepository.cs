@@ -10,5 +10,8 @@ namespace apipruebasb_repository.IMDB
     {
         public Task<GenericResponse<ListaPeliculaDTO>> BuscarPorTitulo(string Titulo, int pagina = 1);
         public Task<GenericResponse<DetallePeliculaDTO>> BuscarDetallePelicula(string codigo);
+
+        public Task<GenericResponse<dynamic>> BuscarComentarios(string codigoPelicula);
+        public Task<GenericResponse<dynamic>> AgregarComentario(string codigoPelicula, string comentario);
     }
 }

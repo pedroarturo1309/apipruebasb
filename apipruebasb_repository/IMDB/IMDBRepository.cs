@@ -73,5 +73,15 @@ namespace apipruebasb_repository.IMDB
 
             return respuesta;
         }
+
+        public Task<GenericResponse<dynamic>> BuscarComentarios(string codigoPelicula)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<GenericResponse<dynamic>> AgregarComentario(string codigoPelicula, string comentario)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
