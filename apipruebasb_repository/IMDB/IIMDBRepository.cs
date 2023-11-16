@@ -13,5 +13,7 @@ namespace apipruebasb_repository.IMDB
 
         public Task<GenericResponse<dynamic>> BuscarComentarios(string codigoPelicula);
         public Task<GenericResponse<dynamic>> AgregarComentario(string codigoPelicula, string comentario);
+        public Task<GenericResponse<dynamic>> EditarComentario(int id, string comentario);
+        public Task<GenericResponse<dynamic>> EliminarComentario(int id);
     }
 }

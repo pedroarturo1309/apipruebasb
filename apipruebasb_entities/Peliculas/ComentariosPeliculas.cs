@@ -18,6 +18,7 @@ namespace apipruebasb_entities.Peliculas
         public string Comentario { get; set; }
 
         public int UsuarioId { get; set; }
+        public bool Disponible { get; set; } = true;
 
         public DateTime? FechaCreacion { get; set; }
 

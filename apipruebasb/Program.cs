@@ -30,6 +30,7 @@ builder.Services.AddCors(options =>
                   policy =>
                   {
                       policy.WithOrigins("http://localhost:4200")
+                      .WithOrigins("https://coratech-sce.azurewebsites.net")
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                   });

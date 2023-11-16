@@ -124,5 +124,29 @@ namespace apipruebasb_repository.IMDB
             }
             return respuesta;
         }
+
+        public async Task<GenericResponse<dynamic>> EditarComentario(int id, string comentario)
+        {
+            var item = _context.ComentariosPeliculas.FirstOrDefault(x => x.Id == id && x.UsuarioId == CurrentUser.UsuarioId);
+
+            if(item != null) {
+                item.Comentario = comentario;
+                await _context.SaveChangesAsync();
+            }
+            return new GenericResponse<dynamic>();
+
+        }
+
+        public async Task<GenericResponse<dynamic>> EliminarComentario(int id)
+        {
+            var comentario = _context.ComentariosPeliculas.FirstOrDefault(x => x.Id == id && x.UsuarioId == CurrentUser.UsuarioId);
+
+            if(comentario != null) {
+                comentario.Disponible = false;
+                await _context.SaveChangesAsync();
+            }
+
+            return new GenericResponse<dynamic>();
+        }
     }
 }

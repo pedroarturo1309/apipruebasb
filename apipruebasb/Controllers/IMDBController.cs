@@ -40,6 +40,20 @@ namespace apipruebasb.Controllers
             return Ok(respuesta);
         }
 
+        [HttpPut("editar-comentario")]
+        public async Task<IActionResult> EditarComentario([FromBody] GuardarComentarioDTO model)
+        {
+            var respuesta = await _repository.EditarComentario(model.Id, model.Comentario);
+            return Ok(respuesta);
+        }
+
+        [HttpDelete("eliminar-comentario")]
+        public async Task<IActionResult> EditarComentario(int id)
+        {
+            var respuesta = await _repository.EliminarComentario(id);
+            return Ok(respuesta);
+        }
+
         [HttpGet("buscar-comentarios")]
         public async Task<IActionResult> BuscarComentarios(string codigo)
         {

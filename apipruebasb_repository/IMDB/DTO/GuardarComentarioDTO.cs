@@ -7,7 +7,8 @@ namespace apipruebasb_repository.IMDB.DTO
 {
     public class GuardarComentarioDTO
     {
-        public string CodigoPelicula { get; set; }
-        public string Comentario { get; set; }
+        public int Id { get; set; }
+        public string? CodigoPelicula { get; set; }
+        public string? Comentario { get; set; }
     }
 }
